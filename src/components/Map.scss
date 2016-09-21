@@ -1,0 +1,8 @@
+.mapComponent > div {
+  width: 500px;
+  height: 500px;
+}
+
+.donor :global(.esri-view-height-xsmall) :global(.esri-popup) :global(.esri-popup-content) {
+  max-height: 400px;
+}
