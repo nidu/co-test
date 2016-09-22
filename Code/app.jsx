@@ -132,7 +132,7 @@ export default class App extends React.Component {
       <div className={styles.container}>
         <h1><a href="#">Blood'o'nation</a></h1>
         <RoleSelect role={this.state.role} onChange={role => this.setState({role})} />
-        {helpPages[this.state.role]}
+        <div className={styles.help}>{helpPages[this.state.role]}</div>
         <Legend />
         <Map 
           onClick={this.onMapClick}
