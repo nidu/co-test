@@ -24,13 +24,19 @@ h1 a {
 
 .legend {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 30px;
 }
 
 .legendCell {
   display: flex;
-  
+  align-items: center; 
 }
 
 .legendCircle {
-
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  margin: 4px;
 }

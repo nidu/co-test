@@ -133,6 +133,7 @@ export default class App extends React.Component {
         <h1><a href="#">Blood'o'nation</a></h1>
         <RoleSelect role={this.state.role} onChange={role => this.setState({role})} />
         {helpPages[this.state.role]}
+        <Legend />
         <Map 
           onClick={this.onMapClick}
           onExtentChange={this.onExtentChange}
@@ -154,12 +155,12 @@ const helpPages = {
 
 const Legend = () => (
   <div className={styles.legend}>
-    {[['A', '#2ecc71'], ['B', '#3498db'], ['AB', '#9b59b6'], ['O', '#e67e22']].map(([t, color]) => {
+    {[['A', '#2ecc71'], ['B', '#3498db'], ['AB', '#9b59b6'], ['O', '#e67e22']].map(([t, color]) => (
       <div key={t} className={styles.legendCell}>
-        <div className={styles.legendCircle} />
+        <div className={styles.legendCircle} style={{backgroundColor: color}} />
         <div>{t}</div>
       </div>
-    })
+    ))}
   </div>
 )
 
@@ -168,12 +169,24 @@ const Footer = () => (
 )
 
 const RoleSelect = ({role, onChange}) => (
-  <RadioButtonGroup name="roles" defaultSelected={role} onChange={(evt, value) => onChange(value)}>
+  <RadioButtonGroup 
+    name="roles" 
+    defaultSelected={role} 
+    onChange={(evt, value) => onChange(value)}
+    style={{
+      margin: 'auto',
+      width: 300
+    }}
+  >
     {[{value: 'donor', label: 'Donor'}, {value: 'patient', label: 'Patient'}].map(({value, label}) => (
       <RadioButton
         key={value}
         value={value}
         label={label}
+        style={{
+          width: 150,
+          display: 'inline-block'
+        }}
       />
     ))}
   </RadioButtonGroup>

@@ -40,7 +40,9 @@ app.get('/', function (req, res) {
 })
 
 app.get('/donors/:lon/:lat/:dist', function (req, res) {
-  var {lon, lat, dist} = req.params
+  var lon = req.params.lon
+  var lat = req.params.lat
+  var dist = req.params.dist
   Donor.find({
     location: {
       $near: {
