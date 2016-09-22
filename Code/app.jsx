@@ -132,21 +132,36 @@ export default class App extends React.Component {
       <div className={styles.container}>
         <h1><a href="#">Blood'o'nation</a></h1>
         <RoleSelect role={this.state.role} onChange={role => this.setState({role})} />
-        <div>
-          <Map 
-            onClick={this.onMapClick}
-            onExtentChange={this.onExtentChange}
-            onInit={view => this.loadDonor(view)}
-            role={this.state.role}
-            donors={this.state.role == 'patient' ? this.state.donors : [this.state.donor].filter(v => v)}
-            center={this.state.center}
-          />
-        </div>
+        {helpPages[this.state.role]}
+        <Map 
+          onClick={this.onMapClick}
+          onExtentChange={this.onExtentChange}
+          onInit={view => this.loadDonor(view)}
+          role={this.state.role}
+          donors={this.state.role == 'patient' ? this.state.donors : [this.state.donor].filter(v => v)}
+          center={this.state.center}
+        />
         <Footer />
       </div>
     )
   }
 }
+
+const helpPages = {
+  'donor': 'Click on your location on the map to register yourself as a donor. You\'ll get unique link which you can use to edit or delete info later.',
+  'patient': 'Click any donor to get contact information.'
+}
+
+const Legend = () => (
+  <div className={styles.legend}>
+    {[['A', '#2ecc71'], ['B', '#3498db'], ['AB', '#9b59b6'], ['O', '#e67e22']].map(([t, color]) => {
+      <div key={t} className={styles.legendCell}>
+        <div className={styles.legendCircle} />
+        <div>{t}</div>
+      </div>
+    })
+  </div>
+)
 
 const Footer = () => (
   <div className={styles.footer}>Made by Nikolay Durygin as a <a href="https://www.crossover.com">Crossover</a> evaluation project.</div>

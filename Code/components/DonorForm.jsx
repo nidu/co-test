@@ -20,10 +20,10 @@ export default class DonorForm extends React.Component {
     this.state = {
       data: {
         id: null,
-        firstName: 'Nikolay',
-        lastName: 'Durygin',
-        contactNumber: '+79 123 1234 123',
-        emailAddress: 'k@g.com',
+        firstName: '',
+        lastName: '',
+        contactNumber: '',
+        emailAddress: '',
         bloodGroup: 'A'
       },
       errors: {},
