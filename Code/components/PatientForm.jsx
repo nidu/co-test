@@ -12,6 +12,16 @@ export default class PatientForm extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.donor != nextProps.donor) {
+      this.setState({
+        isRevealed: false,
+        email: null,
+        contact: null
+      })
+    }
+  }
+
   reveal() {
     $.get(`/donors/${this.props.donor.id}`)
       .done(({emailAddress, contactNumber}) => this.setState({
