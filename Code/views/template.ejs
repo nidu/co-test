@@ -7,10 +7,18 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&lang=en">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+  <% if (process.env.NODE_ENV == 'production') { %>
+  <link rel="stylesheet" href="/app.css">
+  <% } %>
 </head>
 <body>
   <div id="app">Loading...</div>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="https://js.arcgis.com/4.0/"></script>
+  <% if (process.env.NODE_ENV == 'production') { %>
+  <script src="/app.js"></script>
+  <% } else { %>
   <script src="http://localhost:8888/bundle.js"></script>
+  <% } %>
 </body>
 </html>

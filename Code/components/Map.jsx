@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './Map.scss'
+import isEqual from 'lodash/isEqual'
 
 const bloodGroupMap = {
   A: 1,
@@ -37,7 +38,9 @@ export default class MapComponent extends React.Component {
 
   setPos(pos) {
     this.savePos(pos)
-    this.view.center = [pos.longitude, pos.latitude]
+    if (!this.props.center) {
+      this.view.center = [pos.longitude, pos.latitude]
+    }
   }
 
   savePos(pos) {
@@ -62,9 +65,12 @@ export default class MapComponent extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    console.log('componentDidUpdate', this.props.donors)
     if (this.props.donors != prevProps.donors && this.layer && this.makePoint) {
       this.createLayer(this.donorsToGraphics(this.props.donors))
-      console.log('componentDidUpdate')
+    }
+    if (this.props.center && !isEqual(this.props.center, prevProps.center)) {
+      this.view.center = this.props.center
     }
   }
 
@@ -105,11 +111,15 @@ export default class MapComponent extends React.Component {
         map
       })
 
-      view.on('click', evt => this.props.onClick(evt, view))
+      view.on('click', (evt, a, b, c) => {
+        console.log('click', evt, a, b, c)
+        this.props.onClick(evt, view)
+      })
 
       // Search widget
       const searchWidget = new Search({
-        view: view
+        view: view,
+        popupEnabled: false
       })
       searchWidget.startup()
 
@@ -154,11 +164,11 @@ export default class MapComponent extends React.Component {
           popupTemplate: {
             title: '{firstName} {lastName}',
             dockEnabled: false,
-            content: `
-              <p>Blood group: {bloodGroup}
-              <p>Contact number: <a href="#" id="contact-revealer">Click to reveal</a>
-              <p>Email address: <a href="#" id="email-revealer">Click to reveal</a>
-            `
+            // content: `
+            //   <p>Blood group: {bloodGroup}
+            //   <p>Contact number: <a href="#" id="contact-revealer">Click to reveal</a>
+            //   <p>Email address: <a href="#" id="email-revealer">Click to reveal</a>
+            // `
           },
           renderer: new SimpleRenderer({
             symbol: new SimpleMarkerSymbol({
@@ -189,10 +199,9 @@ export default class MapComponent extends React.Component {
             }]
           })
         })
-        layer.popup.on('trigger-action', evt => {
-          console.log('trigger-action', evt)
-        })
 
+        // layer.on('click', evt => this.props.onClick(evt, view))
+        
         if (this.layer) {
           map.remove(this.layer)
         }
@@ -202,6 +211,7 @@ export default class MapComponent extends React.Component {
 
       view.then(() => {
         this.props.onExtentChange(view.extent, view)
+        this.props.onInit && this.props.onInit(view)
       })
 
       this.makePoint = (x, y) => new Point(x, y)

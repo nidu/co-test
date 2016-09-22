@@ -6,6 +6,7 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Map from './components/Map'
 import DonorForm from './components/DonorForm'
+import PatientForm from './components/PatientForm'
 import $ from 'jquery'
 import isEqual from 'lodash/isEqual'
 
@@ -18,11 +19,27 @@ export default class App extends React.Component {
     this.state = {
       role: 'donor', // or 'patient'
       location: null,
-      donors: []
+      donors: [],
+      donor: null
     }
+    
+    this.socket = io()
+    this.socket.on('donor', (donor) => {
+      console.log('Got donor', donor)
+      this.setState({
+        donors: this.state.donors.filter(d => d.id != donor.id).concat([donor]) 
+      })
+    })
+    this.socket.on('donorDeleted', id => {
+      console.log('Donor deleted', id)
+      this.setState({
+        donors: this.state.donors.filter(d => d.id != id) 
+      })
+    })
   }
 
   onMapClick = (evt, view) => {
+    this.view = view
     console.log('onMapClick', evt, view.extent)
     if (this.state.role == 'donor') {
       view.popup.open({
@@ -33,14 +50,35 @@ export default class App extends React.Component {
       ReactDOM.render(
         <MuiThemeProvider>
           <DonorForm 
-            onClose={() => view.popup.close()} 
+            onClose={() => view.popup.close()}
             mapPoint={evt.mapPoint}
+            afterSave={donor => this.setState({donor})}
+            afterDelete={() => this.setState({donor: null})}
           />
         </MuiThemeProvider>, 
         document.querySelector('.esri-popup-content')
       )
 
       view.popup.dockEnabled = false
+    } else {
+      let donor
+      view.hitTest(evt.screenPoint).then((response) => {  
+        const graphics = response.results
+        graphics.forEach(({graphic}) => {
+          donor = graphic.attributes
+        })
+      })
+
+      if (donor) {
+        ReactDOM.render(
+          <MuiThemeProvider>
+            <PatientForm 
+              donor={donor}
+            />
+          </MuiThemeProvider>, 
+          document.querySelector('.esri-popup-content')
+        )
+      }
     }
   }
 
@@ -54,6 +92,28 @@ export default class App extends React.Component {
     })
   }
 
+  loadDonor(view) {
+    this.view = view
+    const id = this.getDonorIdFromUrl()
+    if (id) {
+      $.get(`/donors/${id}`)
+        .done(donor => {
+          console.log('loadDonor.done', donor)
+          this.setState({
+            donor,
+            center: donor.location.coordinates
+          })
+        })
+    }
+  }
+
+  getDonorIdFromUrl() {
+    const m = location.hash.match(/#\/donors\/(.+)/)
+    if (m) {
+      return m[1]
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.state.role == 'patient' && this.state.center && (
           prevState.role != this.state.role ||
@@ -62,19 +122,24 @@ export default class App extends React.Component {
       $.get(['/donors', ...this.state.center, this.state.radius].join('/'))
         .done(donors => this.setState({donors}))
     }
+    if (this.state.role != prevState.role && this.view) {
+      this.view.popup.close()
+    }
   }
 
   render() {
     return (
-      <div>
-        <h1>Blood'o'nation</h1>
+      <div className={styles.container}>
+        <h1><a href="#">Blood'o'nation</a></h1>
         <RoleSelect role={this.state.role} onChange={role => this.setState({role})} />
         <div>
           <Map 
-            onClick={this.onMapClick} 
+            onClick={this.onMapClick}
             onExtentChange={this.onExtentChange}
+            onInit={view => this.loadDonor(view)}
             role={this.state.role}
-            donors={this.state.role == 'patient' ? this.state.donors : []}
+            donors={this.state.role == 'patient' ? this.state.donors : [this.state.donor].filter(v => v)}
+            center={this.state.center}
           />
         </div>
         <Footer />
@@ -84,7 +149,7 @@ export default class App extends React.Component {
 }
 
 const Footer = () => (
-  <div>Made by Nikolay Durygin as a Crossover evaluation project.</div>
+  <div className={styles.footer}>Made by Nikolay Durygin as a <a href="https://www.crossover.com">Crossover</a> evaluation project.</div>
 )
 
 const RoleSelect = ({role, onChange}) => (

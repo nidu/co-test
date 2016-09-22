@@ -1,0 +1,23 @@
+body {
+  font-family: Roboto;
+}
+
+.container {
+  width: 600px;
+  margin: auto;
+  :global {
+    h1 { 
+      text-align: center;
+      a {
+        text-decoration: none;
+        color: #333;
+      } 
+    }
+  }
+}
+
+.footer {
+  margin-top: 20px;
+  color: gray;
+  text-align: center;
+}

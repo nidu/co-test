@@ -17,7 +17,7 @@ loaders.push({
 });
 // local scss modules
 loaders.push({
-	test: /[\/\\]src[\/\\].*\.scss/,
+	test: /[\/\\]Code[\/\\].*\.scss/,
 	loaders: [
 		'style?sourceMap',
 		'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
@@ -27,7 +27,7 @@ loaders.push({
 
 // local css modules
 loaders.push({
-	test: /[\/\\]src[\/\\].*\.css/,
+	test: /[\/\\]Code[\/\\].*\.css/,
 	loaders: [
 		'style?sourceMap',
 		'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
@@ -38,7 +38,7 @@ module.exports = {
 	entry: [
 		`webpack-dev-server/client?http://${HOST}:${PORT}`,
 		`webpack/hot/only-dev-server`,
-		`./src/index.jsx` // Your appʼs entry point
+		`./Code/index.jsx` // Your appʼs entry point
 	],
 	devtool: process.env.WEBPACK_DEVTOOL || 'source-map',
 	output: {

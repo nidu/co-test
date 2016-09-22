@@ -37,7 +37,10 @@ export default class DonorForm extends React.Component {
     const id = this.getDonorIdFromUrl()
     if (id) {
       $.get(`/donors/${id}`)
-        .done(data => this.setState({data}))
+        .done(data => {
+          this.props.onLoadDonor && this.props.onLoadDonor(data)
+          this.setState({ data })
+        })
     }
   }
 
@@ -59,8 +62,8 @@ export default class DonorForm extends React.Component {
     validateField('firstName', v => v.length >= 2, 'Too short. Enter not less than 2 characters.')
     validateField('lastName', v => v.length >= 2, 'Too short. Enter not less than 2 characters.')
     validateField(
-      'contactNumber', 
-      v => v.match(/^(\+|00)\d{2} \d{3} \d{4} \d{3}$/), 
+      'contactNumber',
+      v => v.match(/^(\+|00)\d{2} \d{3} \d{4} \d{3}$/),
       'Should be in format (+xx xxx xxxx xxx | 00xx xxx xxxx xxx).'
     )
     validateField(
@@ -117,6 +120,7 @@ export default class DonorForm extends React.Component {
       step: 'editing',
       data: donor
     })
+    this.props.afterSave && this.props.afterSave(donor)
     location.hash = `/donors/${donor.id}`
   }
 
@@ -125,10 +129,13 @@ export default class DonorForm extends React.Component {
     $.ajax({
       method: 'delete',
       url: `/donors/${data.id}`
-    }).done(() => this.setState({
-      data: set('id', null, this.state.data),
-      step: 'editing'
-    }))
+    }).done(() => {
+      this.setState({
+        data: set('id', null, this.state.data),
+        step: 'editing'
+      })
+      this.props.afterDelete && this.props.afterDelete()
+    })
 
     this.setState({
       step: 'deleting'
@@ -158,73 +165,73 @@ export default class DonorForm extends React.Component {
         <TextField
           id="firstName"
           value={data.firstName}
-          onChange={onTextFieldChange('firstName')}
+          onChange={onTextFieldChange('firstName') }
           errorText={errors.firstName}
           hintText="First name"
           disabled={disabled}
-        />
+          />
         <TextField
           id="lastName"
           value={data.lastName}
-          onChange={onTextFieldChange('lastName')}
+          onChange={onTextFieldChange('lastName') }
           errorText={errors.lastName}
           hintText="Last name"
           disabled={disabled}
-        />
+          />
         <TextField
           id="contactNumber"
           value={data.contactNumber}
-          onChange={onTextFieldChange('contactNumber')}
+          onChange={onTextFieldChange('contactNumber') }
           errorText={errors.contactNumber}
           hintText="Contact number"
           disabled={disabled}
-        />
+          />
         <TextField
           id="email"
           type="email"
           value={data.emailAddress}
-          onChange={onTextFieldChange('emailAddress')}
+          onChange={onTextFieldChange('emailAddress') }
           errorText={errors.emailAddress}
           hintText="Email address"
           disabled={disabled}
-        />
+          />
         <SelectField
           id="bloodGroup"
           value={data.bloodGroup}
-          onChange={onSelectFieldChange('bloodGroup')}
+          onChange={onSelectFieldChange('bloodGroup') }
           hintText="Blood group"
           disabled={disabled}>
           {allBloodGroups.map(g => (
             <MenuItem key={g} value={g} primaryText={g} />
-          ))}
+          )) }
         </SelectField>
         <div>
           <FlatButton
             label={step == 'saving' ? 'Saving...' : 'Save'}
             primary={true}
             disabled={disabled}
-            onClick={e => this.onSave()}
-          />
-          <FlatButton
+            onClick={e => this.onSave() }
+            />
+          {/*<FlatButton
             label="Close"
             secondary={true}
             disabled={disabled}
             onClick={e => this.props.onClose()}
-          />
+          />*/}
         </div>
         {this.state.error}
         {this.state.data.id &&
-            <div>
-              Link to your form: {this.href()}
-              <IconButton 
-                tooltip="Delete info" 
-                onClick={e => this.onDeleteInfo()} 
-                iconClassName="material-icons"
-                tooltipPosition="top-center"
+          <div>
+            Link to your form: {this.href() }
+            <IconButton
+              tooltip="Delete info"
+              onClick={e => this.onDeleteInfo() }
+              iconClassName="material-icons"
+              tooltipPosition="top-center"
               >
-                delete
-              </IconButton>
-            </div>}
+              delete
+            </IconButton>
+          </div>}
       </div>
     )
   }

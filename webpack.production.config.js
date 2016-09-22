@@ -8,13 +8,13 @@ var WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 // local css modules
 loaders.push({
-	test: /[\/\\]src[\/\\].*\.css/,
+	test: /[\/\\]Code[\/\\].*\.css/,
 	loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]')
 });
 
 // local scss modules
 loaders.push({
-	test: /[\/\\]src[\/\\].*\.scss/,
+	test: /[\/\\]Code[\/\\].*\.scss/,
 	loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'sass')
 });
 // global css files
@@ -25,11 +25,11 @@ loaders.push({
 
 module.exports = {
 	entry: [
-		'./src/index.jsx'
+		'./Code/index.jsx'
 	],
 	output: {
 		path: path.join(__dirname, 'public'),
-		filename: '[chunkhash].js'
+		filename: 'app.js'
 	},
 	resolve: {
 		extensions: ['', '.js', '.jsx']
@@ -53,12 +53,8 @@ module.exports = {
 			}
 		}),
 		new webpack.optimize.OccurenceOrderPlugin(),
-		new ExtractTextPlugin('[contenthash].css', {
+		new ExtractTextPlugin('app.css', {
 			allChunks: true
-		}),
-		new HtmlWebpackPlugin({
-			template: './src/template.html',
-			title: 'Webpack App'
 		}),
 		new webpack.optimize.DedupePlugin()
 	]
