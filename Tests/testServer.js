@@ -86,7 +86,7 @@ describe('Donor', function () {
       .get(`/donors/${lon}/${lat}/${10000}`)
       .expect(200, function(err, resp) {
         assert(!err)
-        assert.equal(resp.body.length, 1)
+        assert(resp.body.length > 0)
         done()
       })
   })
