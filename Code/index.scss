@@ -2,18 +2,18 @@ body {
   font-family: Roboto;
 }
 
+h1 { 
+  text-align: center;
+}
+
+h1 a {
+  text-decoration: none;
+  color: #333;
+} 
+
 .container {
   width: 600px;
   margin: auto;
-  :global {
-    h1 { 
-      text-align: center;
-      a {
-        text-decoration: none;
-        color: #333;
-      } 
-    }
-  }
 }
 
 .footer {
