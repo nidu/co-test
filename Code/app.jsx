@@ -141,6 +141,7 @@ export default class App extends React.Component {
           role={this.state.role}
           donors={this.state.role == 'patient' ? this.state.donors : [this.state.donor].filter(v => v)}
           center={this.state.center}
+          shouldRequestPos={!this.getDonorIdFromUrl()}
         />
         <Footer />
       </div>

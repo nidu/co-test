@@ -28,7 +28,7 @@ export default class MapComponent extends React.Component {
   }
 
   requestPos() {
-    if (this.isGeolocationSupported()) {
+    if (this.props.shouldRequestPos && this.isGeolocationSupported()) {
       navigator.geolocation.getCurrentPosition(pos => this.setPos({
         longitude: pos.coords.longitude,
         latitude: pos.coords.latitude
@@ -38,9 +38,7 @@ export default class MapComponent extends React.Component {
 
   setPos(pos) {
     this.savePos(pos)
-    if (!this.props.center) {
-      this.view.center = [pos.longitude, pos.latitude]
-    }
+    this.view.center = [pos.longitude, pos.latitude]
   }
 
   savePos(pos) {
