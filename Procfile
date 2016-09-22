@@ -1,1 +1,1 @@
-web: NODE_ENV=production PORT=80 DATABASE_URL=mongodb://app:7Palaris@ds035786.mlab.com:35786/heroku_p3x646z8 node Code/server.js
+web: NODE_ENV=production DATABASE_URL=mongodb://app:7Palaris@ds035786.mlab.com:35786/heroku_p3x646z8 node Code/server.js
